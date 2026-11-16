@@ -1,4 +1,4 @@
-ARG ORG=dockcross
+ARG ORG=ghcr.io/loong64/dockcross
 FROM ${ORG}/base:latest
 
 LABEL maintainer="Gleb Popov arrowd@FreeBSD.org"

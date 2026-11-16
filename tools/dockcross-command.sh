@@ -7,7 +7,7 @@ if (( $# >= 2 )); then
     host_arch=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
     if test $tag = $image; then
         # use multiarch image if available
-        if docker images | grep dockcross/${image} | grep latest-${host_arch} >/dev/null; then
+        if docker images | grep ghcr.io/loong64/dockcross/${image} | grep latest-${host_arch} >/dev/null; then
           tag="latest-${host_arch}"
         else
           tag="latest"
@@ -18,15 +18,15 @@ if (( $# >= 2 )); then
     command=$*
     echo "command: $command"
 
-#    echo "Pulling dockcross/$image"
-#    docker pull "dockcross/$image:$tag"
+#    echo "Pulling ghcr.io/loong64/dockcross/$image
+#    docker pull "ghcr.io/loong64/$image:$tag"
 
     echo "Make script dockcross-$image"
-    docker run --rm dockcross/"$image:$tag" > ./dockcross-"$image"
+    docker run --rm ghcr.io/loong64/dockcross/"$image:$tag" > ./dockcross-"$image"
     chmod +x ./dockcross-"$image"
     
     echo "Run command in dockcross-$image"
-    ./dockcross-"$image" -i dockcross/"$image:$tag" $command
+    ./dockcross-"$image" -i ghcr.io/loong64/dockcross/"$image:$tag" $command
 else
     echo "Usage: ${0##*/} <docker imag (ex: linux-x64/linux-x64-clang/linux-arm64/windows-shared-x64/windows-static-x64...)> <command>"
     exit 1

@@ -29,7 +29,7 @@ BUILD_CMD := $(or $(BUILD_CMD), build)
 TAG_FLAG := $(or $(TAG_FLAG), --tag)
 
 # Docker organization to pull the images from
-ORG = dockcross
+ORG = ghcr.io/loong64/dockcross
 
 # Host architecture
 HOST_ARCH := $(or $(HOST_ARCH), $(shell uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/'))
@@ -43,7 +43,7 @@ STANDARD_IMAGES := android-arm android-arm64 android-x86 android-x86_64 \
 	linux-armv5 linux-armv5-musl linux-armv5-uclibc linux-m68k-uclibc linux-s390x linux-x64-tinycc \
 	linux-armv6 linux-armv6-lts linux-armv6-musl linux-arm64-lts linux-mipsel-lts \
 	linux-armv7l-musl linux-armv7 linux-armv7a linux-armv7-lts linux-armv7a-lts linux-x86_64-full \
-	linux-loongarch64 linux-mips linux-mips-uclibc linux-mips-lts \
+	linux-loongarch64 linux-loongarch64-lts linux-loongarch64-musl linux-mips linux-mips-uclibc linux-mips-lts \
 	linux-ppc linux-ppc64le linux-ppc64le-lts linux-riscv64 linux-riscv32 linux-xtensa-uclibc \
 	windows-static-x86 windows-static-x64 windows-static-x64-posix windows-armv7 \
 	windows-shared-x86 windows-shared-x64 windows-shared-x64-posix windows-arm64 \
@@ -56,7 +56,7 @@ GEN_IMAGES := android-arm android-arm64 \
 	manylinux2014-x64 manylinux2014-x86 \
 	manylinux2014-aarch64 manylinux_2_28-aarch64 manylinux_2_34-aarch64 linux-arm64-lts \
 	web-wasm web-wasi web-wasi-emulated-threads web-wasi-threads \
-	linux-loongarch64 linux-mips linux-mips-uclibc linux-mips-lts windows-arm64 windows-armv7 \
+	linux-loongarch64 linux-loongarch64-lts linux-loongarch64-musl linux-mips linux-mips-uclibc linux-mips-lts windows-arm64 windows-armv7 \
 	windows-static-x86 windows-static-x64 windows-static-x64-posix \
 	windows-shared-x86 windows-shared-x64 windows-shared-x64-posix \
 	linux-armv7 linux-armv7a linux-armv7l-musl linux-armv7-lts linux-armv7a-lts linux-x86_64-full \

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_DOCKCROSS_IMAGE=dockcross/base  # DO NOT MOVE THIS LINE (see entrypoint.sh)
+DEFAULT_DOCKCROSS_IMAGE=ghcr.io/loong64/dockcross/base  # DO NOT MOVE THIS LINE (see entrypoint.sh)
 
 #------------------------------------------------------------------------------
 # Helpers

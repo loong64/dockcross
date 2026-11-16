@@ -1,0 +1,55 @@
+ARG ORG=ghcr.io/loong64/dockcross
+FROM ${ORG}/base:latest
+
+ENV XCC_PREFIX=/usr/xcc
+ENV CROSS_TRIPLE=loongarch64-linux-musl
+ENV CROSS_ROOT=${XCC_PREFIX}/${CROSS_TRIPLE}-cross
+
+# GCC 14.2.0, Binutils 2.44 and musl 1.2.5 from:
+# https://github.com/loong64/musl-cross-make/releases/tag/20260507
+RUN mkdir -p ${XCC_PREFIX}
+RUN curl --max-time 15 --retry 5 -LO https://github.com/loong64/musl-cross-make/releases/download/20260507/${CROSS_TRIPLE}-cross.tgz
+RUN tar -C ${XCC_PREFIX} -xvf ${CROSS_TRIPLE}-cross.tgz
+
+# The prebuilt toolchain omits Linux UAPI headers. Install headers for the
+# target architecture into its sysroot (OpenSSL needs linux/mman.h).
+ENV LINUX_HEADERS_VERSION=6.12
+RUN curl --fail --location --retry 5 \
+      https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${LINUX_HEADERS_VERSION}.tar.xz \
+      -o /tmp/linux-headers.tar.xz \
+ && mkdir /tmp/linux-headers \
+ && tar -xf /tmp/linux-headers.tar.xz -C /tmp/linux-headers --strip-components=1 \
+ && make -C /tmp/linux-headers ARCH=loongarch \
+      INSTALL_HDR_PATH=${CROSS_ROOT}/${CROSS_TRIPLE} headers_install \
+ && rm -rf /tmp/linux-headers /tmp/linux-headers.tar.xz
+
+ENV AS=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-as \
+    AR=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ar \
+    CC=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-gcc \
+    CPP=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-cpp \
+    CXX=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-g++ \
+    LD=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ld \
+    FC=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-gfortran
+
+# Prepare CMake
+COPY Toolchain.cmake ${CROSS_ROOT}/
+ENV CMAKE_TOOLCHAIN_FILE=${CROSS_ROOT}/Toolchain.cmake
+
+# Linux kernel cross compilation variables
+ENV PATH=${PATH}:${CROSS_ROOT}/bin
+ENV CROSS_COMPILE=${CROSS_TRIPLE}-
+ENV ARCH=loongarch
+
+# Build-time metadata as defined at http://label-schema.org
+ARG BUILD_DATE
+ARG IMAGE=ghcr.io/loong64/dockcross/linux-loongarch64-musl
+ARG VERSION=latest
+ARG VCS_REF
+ARG VCS_URL
+LABEL org.label-schema.build-date=$BUILD_DATE \
+    org.label-schema.name=$IMAGE \
+    org.label-schema.version=$VERSION \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.vcs-url=$VCS_URL \
+    org.label-schema.schema-version="1.0"
+ENV DEFAULT_DOCKCROSS_IMAGE=${IMAGE}:${VERSION}
